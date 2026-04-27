@@ -52,8 +52,8 @@ function buildContextMenu() {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 320,
-    height: 152,
+    width: 360,
+    height: 185,
     resizable: false,
     frame: false,
     alwaysOnTop: false,

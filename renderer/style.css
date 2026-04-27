@@ -7,15 +7,15 @@
 body {
   background: #1e1e1e;
   color: #e0e0e0;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  font-size: 12px;
+  font-family: 'Consolas', 'Cascadia Code', 'Courier New', monospace;
+  font-size: 14px;
   user-select: none;
   overflow: hidden;
 }
 
 .titlebar {
   background: #2a2a2a;
-  height: 28px;
+  height: 32px;
   display: flex;
   align-items: center;
   padding: 0 6px 0 10px;
@@ -25,7 +25,7 @@ body {
 
 .title {
   flex: 1;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #888;
   letter-spacing: 0.06em;
@@ -38,9 +38,9 @@ body {
   border: none;
   color: #666;
   cursor: pointer;
-  font-size: 14px;
-  width: 24px;
-  height: 24px;
+  font-size: 16px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -54,11 +54,11 @@ body {
 }
 
 .content {
-  padding: 8px 10px 6px;
+  padding: 10px 12px 8px;
 }
 
 .row {
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .row:last-child {
@@ -68,23 +68,22 @@ body {
 .row-top {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
 }
 
 .label {
-  width: 20px;
-  font-size: 10px;
+  width: 28px;
+  font-size: 13px;
   font-weight: 600;
   color: #666;
   text-align: right;
   flex-shrink: 0;
-  letter-spacing: 0.04em;
 }
 
 .bar-wrap {
   flex: 1;
   background: #333;
-  height: 8px;
+  height: 10px;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -96,28 +95,28 @@ body {
 }
 
 .pct {
-  width: 34px;
+  width: 40px;
   text-align: right;
-  font-size: 11px;
+  font-size: 14px;
   color: #bbb;
   font-variant-numeric: tabular-nums;
 }
 
 .subtext {
-  margin-left: 27px;
-  margin-top: 2px;
-  font-size: 10px;
+  margin-left: 36px;
+  margin-top: 3px;
+  font-size: 12px;
   color: #555;
 }
 
 .message {
   color: #666;
-  font-size: 11px;
+  font-size: 13px;
   padding: 8px 0;
 }
 
 .error {
   color: #e57373;
-  font-size: 11px;
+  font-size: 13px;
   padding: 8px 0;
 }
