@@ -14,6 +14,24 @@ function loadCookie() {
   return null;
 }
 
+function makeFetch(cookie) {
+  return (url) => fetch(url, {
+    headers: {
+      'Cookie': cookie,
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'Accept': 'application/json, text/plain, */*',
+      'Accept-Language': 'en-GB,en;q=0.9',
+      'Referer': 'https://claude.ai/',
+      'Origin': 'https://claude.ai',
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Site': 'same-origin',
+      'anthropic-client-platform': 'web_claude_ai',
+      'anthropic-client-version': '0.0.0',
+    },
+  });
+}
+
 function bar(pct, width = 20) {
   const filled = Math.round((pct / 100) * width);
   return '[' + '█'.repeat(filled) + '░'.repeat(width - filled) + ']';
@@ -66,7 +84,7 @@ if (!cookie) {
 }
 
 try {
-  const data = await fetchUsage(cookie);
+  const data = await fetchUsage(makeFetch(cookie));
   display(data);
 } catch (err) {
   console.error(err.message);

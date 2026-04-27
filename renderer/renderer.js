@@ -9,8 +9,8 @@ document.getElementById('closeBtn').addEventListener('click', () => {
 });
 
 function colorFor(pct) {
-  if (pct < 60) return '#4caf50';
-  if (pct < 80) return '#ffb300';
+  if (pct < 60) return '#4a90d9';
+  if (pct < 80) return '#357abd';
   if (pct < 90) return '#ff7043';
   return '#f44336';
 }
