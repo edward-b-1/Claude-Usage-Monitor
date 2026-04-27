@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain, session } from 'electron';
+import { app, BrowserWindow, Menu, dialog, ipcMain, session } from 'electron';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { fetchUsage } from './api.js';
@@ -85,15 +85,7 @@ function setRefreshInterval(ms) {
 
 function buildContextMenu() {
   return Menu.buildFromTemplate([
-    {
-      label: 'Always on Top',
-      type: 'checkbox',
-      checked: isAlwaysOnTop,
-      click() {
-        isAlwaysOnTop = !isAlwaysOnTop;
-        mainWindow.setAlwaysOnTop(isAlwaysOnTop);
-      },
-    },
+    { label: 'Refresh Now', click() { pollUsage(); } },
     {
       label: 'Refresh Interval',
       submenu: INTERVALS.map(({ label, ms }) => ({
@@ -103,8 +95,15 @@ function buildContextMenu() {
         click() { setRefreshInterval(ms); },
       })),
     },
-    { type: 'separator' },
-    { label: 'Refresh Now', click() { pollUsage(); } },
+    {
+      label: 'Always on Top',
+      type: 'checkbox',
+      checked: isAlwaysOnTop,
+      click() {
+        isAlwaysOnTop = !isAlwaysOnTop;
+        mainWindow.setAlwaysOnTop(isAlwaysOnTop);
+      },
+    },
     { type: 'separator' },
     {
       label: 'Sign Out',
@@ -117,6 +116,18 @@ function buildContextMenu() {
       },
     },
     { type: 'separator' },
+    {
+      label: 'About',
+      click() {
+        dialog.showMessageBox(mainWindow, {
+          type: 'info',
+          title: 'About Claude Usage Monitor',
+          message: 'Claude Usage Monitor',
+          detail: `Version: ${app.getVersion()}\n\nMonitors your Claude token usage from claude.ai.\n\nhttps://github.com/edward-b-1/Claude-Usage-Monitor`,
+          buttons: ['OK'],
+        });
+      },
+    },
     { label: 'Quit', click() { app.quit(); } },
   ]);
 }
