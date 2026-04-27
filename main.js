@@ -7,11 +7,18 @@ import { fetchUsage } from './api.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const COOKIE_FILE = join(homedir(), '.claude-monitor-cookie');
-const POLL_INTERVAL = 60 * 1000;
+
+const INTERVALS = [
+  { label: '30 seconds', ms: 30 * 1000 },
+  { label: '1 minute',   ms: 60 * 1000 },
+  { label: '5 minutes',  ms: 5 * 60 * 1000 },
+  { label: '10 minutes', ms: 10 * 60 * 1000 },
+];
 
 let mainWindow = null;
 let pollTimer = null;
 let isAlwaysOnTop = false;
+let pollIntervalMs = 60 * 1000;
 
 function loadCookie() {
   if (existsSync(COOKIE_FILE)) return readFileSync(COOKIE_FILE, 'utf8').trim();
@@ -32,6 +39,12 @@ async function pollUsage() {
   }
 }
 
+function setInterval_(ms) {
+  pollIntervalMs = ms;
+  clearInterval(pollTimer);
+  pollTimer = setInterval(pollUsage, pollIntervalMs);
+}
+
 function buildContextMenu() {
   return Menu.buildFromTemplate([
     {
@@ -43,8 +56,17 @@ function buildContextMenu() {
         mainWindow.setAlwaysOnTop(isAlwaysOnTop);
       },
     },
+    {
+      label: 'Refresh Interval',
+      submenu: INTERVALS.map(({ label, ms }) => ({
+        label,
+        type: 'radio',
+        checked: pollIntervalMs === ms,
+        click() { setInterval_(ms); },
+      })),
+    },
     { type: 'separator' },
-    { label: 'Refresh', click() { pollUsage(); } },
+    { label: 'Refresh Now', click() { pollUsage(); } },
     { type: 'separator' },
     { label: 'Quit', click() { app.quit(); } },
   ]);
@@ -82,7 +104,7 @@ ipcMain.on('close-window', () => mainWindow?.close());
 app.whenReady().then(() => {
   createWindow();
   pollUsage();
-  pollTimer = setInterval(pollUsage, POLL_INTERVAL);
+  pollTimer = setInterval(pollUsage, pollIntervalMs);
 });
 
 app.on('window-all-closed', () => app.quit());
