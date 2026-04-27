@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain, session, net } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, session } from 'electron';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { fetchUsage } from './api.js';
@@ -18,21 +18,30 @@ let loginWindow = null;
 let pollTimer = null;
 let isAlwaysOnTop = false;
 let pollIntervalMs = 60 * 1000;
+let cookieString = null;
 
 function claudeSession() {
   return session.fromPartition(PARTITION);
 }
 
+async function extractCookies() {
+  const cookies = await claudeSession().cookies.get({ url: 'https://claude.ai' });
+  cookieString = cookies.map(c => `${c.name}=${c.value}`).join('; ');
+  return cookieString;
+}
+
 function makeFetch() {
-  const ses = claudeSession();
-  return (url) => net.fetch(url, {
-    session: ses,
+  return (url) => fetch(url, {
     headers: {
+      'Cookie': cookieString,
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
       'Accept': 'application/json, text/plain, */*',
       'Accept-Language': 'en-GB,en;q=0.9',
       'Referer': 'https://claude.ai/',
       'Origin': 'https://claude.ai',
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Site': 'same-origin',
       'anthropic-client-platform': 'web_claude_ai',
       'anthropic-client-version': '0.0.0',
     },
@@ -40,6 +49,8 @@ function makeFetch() {
 }
 
 async function isAuthenticated() {
+  await extractCookies();
+  if (!cookieString.includes('sessionKey')) return false;
   try {
     const res = await makeFetch()('https://claude.ai/api/account');
     if (!res.ok) return false;
@@ -55,9 +66,8 @@ async function pollUsage() {
     const data = await fetchUsage(makeFetch());
     mainWindow?.webContents.send('usage-update', data);
   } catch (err) {
-    const isAuthError = err.message.includes('Authentication failed');
     mainWindow?.webContents.send('usage-error', err.message);
-    if (isAuthError) showLoginWindow();
+    if (err.message.includes('Authentication failed')) showLoginWindow();
   }
 }
 
@@ -99,6 +109,7 @@ function buildContextMenu() {
     {
       label: 'Sign Out',
       async click() {
+        cookieString = null;
         await claudeSession().clearStorageData();
         clearInterval(pollTimer);
         mainWindow?.close();
@@ -127,14 +138,16 @@ function showLoginWindow() {
   loginWindow.loadURL('https://claude.ai/login');
 
   const ses = claudeSession();
-  const onCookieChanged = (_event, cookie, _cause, removed) => {
+  const onCookieChanged = async (_event, cookie, _cause, removed) => {
     if (cookie.name === 'sessionKey' && !removed) {
       ses.cookies.off('changed', onCookieChanged);
-      setTimeout(() => {
+      // Wait briefly for any remaining cookies to settle
+      setTimeout(async () => {
+        await extractCookies();
         loginWindow?.close();
         loginWindow = null;
         createMainWindow();
-      }, 500);
+      }, 1500);
     }
   };
   ses.cookies.on('changed', onCookieChanged);
@@ -180,8 +193,7 @@ ipcMain.on('request-refresh', () => pollUsage());
 ipcMain.on('close-window', () => mainWindow?.close());
 
 app.whenReady().then(async () => {
-  const authed = await isAuthenticated();
-  if (authed) {
+  if (await isAuthenticated()) {
     createMainWindow();
   } else {
     showLoginWindow();
