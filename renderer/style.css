@@ -1,3 +1,15 @@
+@font-face {
+  font-family: 'CascadiaMono';
+  src: url('fonts/CascadiaMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'CascadiaMono';
+  src: url('fonts/CascadiaMono-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -7,25 +19,26 @@
 body {
   background: #1e1e1e;
   color: #e0e0e0;
-  font-family: 'Consolas', 'Cascadia Code', 'Courier New', monospace;
-  font-size: 14px;
+  font-family: 'CascadiaMono', monospace;
+  font-weight: 600;
+  font-size: 15px;
   user-select: none;
   overflow: hidden;
 }
 
 .titlebar {
   background: #2a2a2a;
-  height: 32px;
+  height: 34px;
   display: flex;
   align-items: center;
-  padding: 0 6px 0 10px;
+  padding: 0 6px 0 12px;
   -webkit-app-region: drag;
   border-bottom: 1px solid #111;
 }
 
 .title {
   flex: 1;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #888;
   letter-spacing: 0.03em;
@@ -37,9 +50,9 @@ body {
   border: none;
   color: #666;
   cursor: pointer;
-  font-size: 16px;
-  width: 28px;
-  height: 28px;
+  font-size: 17px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,11 +66,11 @@ body {
 }
 
 .content {
-  padding: 10px 12px 8px;
+  padding: 10px 14px 10px;
 }
 
 .row {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .row:last-child {
@@ -67,14 +80,14 @@ body {
 .row-top {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .label {
-  width: 28px;
-  font-size: 13px;
+  width: 30px;
+  font-size: 14px;
   font-weight: 600;
-  color: #666;
+  color: #777;
   text-align: right;
   flex-shrink: 0;
 }
@@ -82,7 +95,7 @@ body {
 .bar-wrap {
   flex: 1;
   background: #333;
-  height: 10px;
+  height: 11px;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -94,28 +107,32 @@ body {
 }
 
 .pct {
-  width: 40px;
+  width: 44px;
   text-align: right;
-  font-size: 14px;
-  color: #bbb;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ccc;
   font-variant-numeric: tabular-nums;
 }
 
 .subtext {
-  margin-left: 36px;
+  margin-left: 40px;
   margin-top: 3px;
   font-size: 12px;
+  font-weight: 400;
   color: #555;
 }
 
 .message {
   color: #666;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 400;
   padding: 8px 0;
 }
 
 .error {
   color: #e57373;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 400;
   padding: 8px 0;
 }

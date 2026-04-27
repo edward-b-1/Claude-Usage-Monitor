@@ -19,7 +19,8 @@
       "main.js",
       "preload.cjs",
       "api.js",
-      "renderer/**"
+      "renderer/**",
+      "renderer/fonts/**"
     ],
     "win": {
       "target": [
