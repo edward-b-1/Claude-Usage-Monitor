@@ -1,0 +1,3 @@
+# Never commit the session cookie
+~/.claude-monitor-cookie
+node_modules/
