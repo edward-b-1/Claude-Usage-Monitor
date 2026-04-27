@@ -21,7 +21,7 @@ function loadCookie() {
 async function pollUsage() {
   const cookie = loadCookie();
   if (!cookie) {
-    mainWindow?.webContents.send('usage-error', 'No cookie found at ~/.claude-monitor-cookie');
+    mainWindow?.webContents.send('usage-error', `No cookie found at ${COOKIE_FILE}`);
     return;
   }
   try {
