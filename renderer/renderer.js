@@ -8,11 +8,8 @@ document.getElementById('closeBtn').addEventListener('click', () => {
   window.electronAPI.closeWindow();
 });
 
-function colorFor(pct) {
-  if (pct < 60) return '#4a90d9';
-  if (pct < 80) return '#357abd';
-  if (pct < 90) return '#ff7043';
-  return '#f44336';
+function colorFor(_pct) {
+  return '#4a90d9';
 }
 
 function formatReset(iso) {
