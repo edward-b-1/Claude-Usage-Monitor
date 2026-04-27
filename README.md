@@ -49,7 +49,7 @@ node cli.js
 ## Example output
 
 ```
-Claude Usage — Edward (alice@example.com's Organization)
+Claude Usage — Alice (alice@example.com's Organization)
 ──────────────────────────────────────────────────
 5-hour window  [███████████████░░░░░] 75%  (resets in 25m)
 7-day window   [███████░░░░░░░░░░░░░] 35%  (resets in 1d 14h)
