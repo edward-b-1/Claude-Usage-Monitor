@@ -6,12 +6,45 @@
   "type": "module",
   "scripts": {
     "start": "electron .",
-    "cli": "node cli.js"
+    "cli": "node cli.js",
+    "build": "electron-builder --win"
   },
   "keywords": [],
   "author": "",
   "license": "GPL-3.0-only",
+  "build": {
+    "appId": "com.edward-b-1.claude-usage-monitor",
+    "productName": "Claude Usage Monitor",
+    "files": [
+      "main.js",
+      "preload.cjs",
+      "api.js",
+      "renderer/**"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "portable": {
+      "artifactName": "${productName}-portable.exe"
+    }
+  },
   "devDependencies": {
-    "electron": "^41.3.0"
+    "electron": "^41.3.0",
+    "electron-builder": "^26.8.1"
   }
 }
