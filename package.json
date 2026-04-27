@@ -1,13 +1,17 @@
 {
   "name": "claude-usage-monitor",
   "version": "1.0.0",
-  "description": "CLI tool to query Claude token usage from claude.ai",
-  "main": "cli.js",
+  "description": "Claude usage monitor — CLI and Electron desktop app",
+  "main": "main.js",
   "type": "module",
   "scripts": {
-    "start": "node cli.js"
+    "start": "electron .",
+    "cli": "node cli.js"
   },
   "keywords": [],
   "author": "",
-  "license": "GPL-3.0-only"
+  "license": "GPL-3.0-only",
+  "devDependencies": {
+    "electron": "^41.3.0"
+  }
 }
