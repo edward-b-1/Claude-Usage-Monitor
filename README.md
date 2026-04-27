@@ -36,11 +36,7 @@ cd Claude-Usage-Monitor
 
 **3. Save the cookie to a file**
 
-```bash
-nano ~/.claude-monitor-cookie
-```
-
-Paste the cookie string (no quotes needed), then save (`Ctrl+O`, `Ctrl+X`).
+Paste the cookie string into `~/.claude-monitor-cookie` (no quotes needed).
 
 > **Security note:** The cookie file is stored outside the project directory and is excluded from git. Treat it like a password — do not share it or commit it.
 
