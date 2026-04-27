@@ -1,64 +1,65 @@
 # Claude Usage Monitor
 
-A tool for monitoring your Claude token usage from [claude.ai](https://claude.ai), displayed as a small always-on-top window on Windows 11.
+A small always-on-top desktop app for Windows 11 that shows your current Claude token usage, queried live from claude.ai.
 
-## Status
+Displays three usage metrics with colour-coded progress bars:
+- 5-hour rate limit window
+- 7-day usage window
+- Extra credit spend (monthly)
 
-Currently in CLI phase — the CLI tool successfully queries the claude.ai internal API and displays usage stats. The Electron desktop app is in development.
+Right-click the window to toggle Always on Top, refresh, or quit.
 
-## Features (CLI)
+## Getting started
 
-- Displays 5-hour rate limit window usage
-- Displays 7-day usage window
-- Displays extra credit usage (monthly spend vs limit)
-- Shows time until each window resets
+### 1. Download the app
 
-## Requirements
+Download the latest build from the [Actions](https://github.com/edward-b-1/Claude-Usage-Monitor/actions) tab:
 
-- Node.js v18 or later
-- A claude.ai account (Free or Pro)
+1. Open the most recent successful run
+2. Scroll to **Artifacts** and download **Claude-Usage-Monitor-Windows**
+3. Extract the zip — you'll find two files:
+   - `Claude Usage Monitor Setup 1.0.0.exe` — installs the app with a Start Menu shortcut
+   - `Claude Usage Monitor-portable.exe` — runs without installing
 
-## Setup
+### 2. Get your session cookie
 
-**1. Clone the repo**
+The app authenticates with claude.ai using your browser session cookie.
 
-```bash
-git clone git@github.com:edward-b-1/Claude-Usage-Monitor.git
-cd Claude-Usage-Monitor
-```
-
-**2. Get your session cookie**
-
-1. Open [claude.ai](https://claude.ai) in your browser and log in
+1. Open [claude.ai](https://claude.ai) and log in
 2. Open DevTools (`F12`) → **Network** tab
 3. Refresh the page, click any request to `claude.ai`
 4. Go to **Headers** → **Request Headers** → right-click the `cookie:` line → **Copy value**
 
-**3. Save the cookie to a file**
+### 3. Save the cookie to a file
 
-Paste the cookie string into `~/.claude-monitor-cookie` (no quotes needed).
+On Windows, open PowerShell and run:
 
-> **Security note:** The cookie file is stored outside the project directory and is excluded from git. Treat it like a password — do not share it or commit it.
-
-**4. Run**
-
-```bash
-node cli.js
+```powershell
+notepad $HOME\.claude-monitor-cookie
 ```
 
-## Example output
+Paste the cookie string in, save, and close.
 
-```
-Claude Usage — Alice (alice@example.com's Organization)
-──────────────────────────────────────────────────
-5-hour window  [███████████████░░░░░] 75%  (resets in 25m)
-7-day window   [███████░░░░░░░░░░░░░] 35%  (resets in 1d 14h)
-Extra credits  [█████████████░░░░░░░] 66%  (£9.92 / £15.00 monthly)
-```
+> **Security note:** Treat this file like a password. Do not share it or commit it to git.
+
+### 4. Run the app
+
+Launch the app. It will load usage data automatically on startup and refresh every 60 seconds. Use the refresh button or right-click → Refresh to update manually.
 
 ## Cookie expiry
 
-Session cookies expire periodically. If you see an authentication error, repeat step 2–3 above with a fresh cookie from your browser.
+Session cookies expire periodically. If the app shows an authentication error, repeat steps 2–3 above with a fresh cookie from your browser.
+
+## Building from source
+
+Builds are produced automatically via GitHub Actions on every push to `main`. To build locally on Windows:
+
+```powershell
+npm install
+npm run build
+```
+
+Output is written to the `dist/` folder.
 
 ## License
 
