@@ -29,17 +29,39 @@ function formatReset(iso) {
 }
 
 function makeRow(label, pct, subtext) {
-  const color = colorFor(pct);
   const row = document.createElement('div');
   row.className = 'row';
-  row.innerHTML = `
-    <div class="row-top">
-      <span class="label">${label}</span>
-      <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
-      <span class="pct">${pct}%</span>
-    </div>
-    <div class="subtext">${subtext}</div>
-  `;
+
+  const rowTop = document.createElement('div');
+  rowTop.className = 'row-top';
+
+  const labelEl = document.createElement('span');
+  labelEl.className = 'label';
+  labelEl.textContent = label;
+
+  const barWrap = document.createElement('div');
+  barWrap.className = 'bar-wrap';
+
+  const barFill = document.createElement('div');
+  barFill.className = 'bar-fill';
+  barFill.style.width = `${pct}%`;
+  barFill.style.backgroundColor = colorFor(pct);
+
+  const pctEl = document.createElement('span');
+  pctEl.className = 'pct';
+  pctEl.textContent = `${pct}%`;
+
+  barWrap.appendChild(barFill);
+  rowTop.appendChild(labelEl);
+  rowTop.appendChild(barWrap);
+  rowTop.appendChild(pctEl);
+
+  const subtextEl = document.createElement('div');
+  subtextEl.className = 'subtext';
+  subtextEl.textContent = subtext;
+
+  row.appendChild(rowTop);
+  row.appendChild(subtextEl);
   return row;
 }
 
@@ -67,5 +89,9 @@ window.electronAPI.onUsageUpdate(({ usage }) => {
 });
 
 window.electronAPI.onError((msg) => {
-  content.innerHTML = `<div class="error">${msg}</div>`;
+  content.innerHTML = '';
+  const err = document.createElement('div');
+  err.className = 'error';
+  err.textContent = msg;
+  content.appendChild(err);
 });
