@@ -12,6 +12,25 @@ function colorFor(_pct) {
   return '#4a90d9';
 }
 
+// Resize the window so its height matches the rendered content (titlebar +
+// however many meter rows are currently shown). Measured after layout settles.
+function resizeToContent() {
+  requestAnimationFrame(() => {
+    const titlebar = document.querySelector('.titlebar');
+    const rows = content.children;
+    let inner = 0;
+    if (rows.length) {
+      const first = rows[0].getBoundingClientRect();
+      const last = rows[rows.length - 1].getBoundingClientRect();
+      inner = last.bottom - first.top;
+    }
+    const cs = getComputedStyle(content);
+    const padding = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+    const total = Math.ceil(titlebar.offsetHeight + padding + inner);
+    window.electronAPI.resizeWindow(total);
+  });
+}
+
 function formatReset(iso) {
   if (!iso) return '';
   const diff = new Date(iso) - new Date();
@@ -75,15 +94,38 @@ window.electronAPI.onUsageUpdate(({ usage }) => {
     content.appendChild(makeRow('7d', u, formatReset(usage.seven_day.resets_at)));
   }
 
+  // Promotional allowance (e.g. free £15/mo) — the legacy `extra_usage` ledger.
   if (usage.extra_usage?.is_enabled) {
     const eu = usage.extra_usage;
     const u = Math.round(eu.utilization);
-    const sym = eu.currency === 'GBP' ? '£' : eu.currency + ' ';
+    const sym = currencySymbol(eu.currency);
     const used = (eu.used_credits / 100).toFixed(2);
     const limit = (eu.monthly_limit / 100).toFixed(2);
-    content.appendChild(makeRow('£', u, `${sym}${used} / ${sym}${limit} monthly`));
+    content.appendChild(makeRow(sym || '£', u, `${sym}${used} / ${sym}${limit} monthly`));
   }
+
+  // Voluntary extra spend against a cap — the newer `spend` ledger.
+  if (usage.spend?.enabled) {
+    const sp = usage.spend;
+    const exp = sp.used?.exponent ?? 2;
+    const sym = currencySymbol(sp.used?.currency);
+    const used = ((sp.used?.amount_minor ?? 0) / 10 ** exp).toFixed(2);
+    const u = Math.round(sp.percent ?? 0);
+    const subtext = sp.limit != null
+      ? `${sym}${used} / ${sym}${(sp.limit / 10 ** exp).toFixed(2)} monthly`
+      : `${sym}${used} spent`;
+    content.appendChild(makeRow(sym || '$', u, subtext));
+  }
+
+  resizeToContent();
 });
+
+function currencySymbol(code) {
+  if (code === 'GBP') return '£';
+  if (code === 'USD') return '$';
+  if (code === 'EUR') return '€';
+  return code ? code + ' ' : '';
+}
 
 window.electronAPI.onError((msg) => {
   content.innerHTML = '';
@@ -91,4 +133,5 @@ window.electronAPI.onError((msg) => {
   err.className = 'error';
   err.textContent = msg;
   content.appendChild(err);
+  resizeToContent();
 });

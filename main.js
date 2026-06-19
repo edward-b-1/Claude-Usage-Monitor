@@ -202,6 +202,11 @@ function createMainWindow() {
 
 ipcMain.on('request-refresh', () => pollUsage());
 ipcMain.on('close-window', () => mainWindow?.close());
+ipcMain.on('resize-window', (_e, height) => {
+  if (!mainWindow || !height) return;
+  const [width] = mainWindow.getContentSize();
+  mainWindow.setContentSize(width, Math.round(height));
+});
 
 app.whenReady().then(async () => {
   if (await isAuthenticated()) {

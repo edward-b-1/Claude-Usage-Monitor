@@ -32,6 +32,13 @@ function makeFetch(cookie) {
   });
 }
 
+function currencySymbol(code) {
+  if (code === 'GBP') return '£';
+  if (code === 'USD') return '$';
+  if (code === 'EUR') return '€';
+  return code ? code + ' ' : '';
+}
+
 function bar(pct, width = 20) {
   const filled = Math.round((pct / 100) * width);
   return '[' + '█'.repeat(filled) + '░'.repeat(width - filled) + ']';
@@ -66,13 +73,26 @@ function display({ account, org, usage }) {
     const u = usage.seven_day.utilization;
     console.log(`7-day window   ${bar(u)} ${u}%  (resets in ${formatReset(usage.seven_day.resets_at)})`);
   }
+  // Promotional allowance (e.g. free £15/mo) — the legacy `extra_usage` ledger.
   if (usage.extra_usage?.is_enabled) {
     const eu = usage.extra_usage;
     const u = Math.round(eu.utilization);
-    const currency = eu.currency === 'GBP' ? '£' : eu.currency + ' ';
+    const sym = currencySymbol(eu.currency);
     const used = (eu.used_credits / 100).toFixed(2);
     const limit = (eu.monthly_limit / 100).toFixed(2);
-    console.log(`Extra credits  ${bar(u)} ${u}%  (${currency}${used} / ${currency}${limit} monthly)`);
+    console.log(`Promo credits  ${bar(u)} ${u}%  (${sym}${used} / ${sym}${limit} monthly)`);
+  }
+  // Voluntary extra spend against a cap — the newer `spend` ledger.
+  if (usage.spend?.enabled) {
+    const sp = usage.spend;
+    const exp = sp.used?.exponent ?? 2;
+    const sym = currencySymbol(sp.used?.currency);
+    const used = ((sp.used?.amount_minor ?? 0) / 10 ** exp).toFixed(2);
+    const u = Math.round(sp.percent ?? 0);
+    const detail = sp.limit != null
+      ? `${sym}${used} / ${sym}${(sp.limit / 10 ** exp).toFixed(2)} monthly`
+      : `${sym}${used} spent`;
+    console.log(`Extra spend    ${bar(u)} ${u}%  (${detail})`);
   }
   console.log();
 }

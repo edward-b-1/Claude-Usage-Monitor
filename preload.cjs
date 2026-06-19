@@ -5,4 +5,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onError: (cb) => ipcRenderer.on('usage-error', (_e, msg) => cb(msg)),
   requestRefresh: () => ipcRenderer.send('request-refresh'),
   closeWindow: () => ipcRenderer.send('close-window'),
+  resizeWindow: (height) => ipcRenderer.send('resize-window', height),
 });
